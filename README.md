@@ -5,12 +5,14 @@ CLI to inspect substrate metadata.
 `cargo install --git https://github.com/ascjones/subsee`
 
 ```
-Usage: subsee [--url <url>]
+Usage: subsee [--url <url>] [-p <pallet>]
 
 Inspect substrate metadata
 
 Options:
   --url             the url of the substrate node to query for metadata
+  -p, --pallet      the name of a pallet to display metadata for, otherwise
+                    displays all
   --help            display usage information
 ```
 

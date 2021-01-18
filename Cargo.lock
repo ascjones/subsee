@@ -189,7 +189,7 @@ dependencies = [
 [[package]]
 name = "frame-metadata"
 version = "12.0.0"
-source = "git+https://github.com/paritytech/frame-metadata?branch=aj-chameleon#b1008c8f6032eb2ed27a590b28ac39356b7b480f"
+source = "git+https://github.com/paritytech/frame-metadata?branch=aj-prefixed#3c38beb38162d7f10c00644537cdfc7fbe755287"
 dependencies = [
  "cfg-if 1.0.0",
  "parity-scale-codec",
