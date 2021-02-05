@@ -23,7 +23,7 @@ fn main() -> color_eyre::Result<()> {
     Ok(())
 }
 
-fn fetch_metadata(url: &str) -> color_eyre::Result<RuntimeMetadataPrefixed<String>> {
+fn fetch_metadata(url: &str) -> color_eyre::Result<RuntimeMetadataPrefixed> {
     let resp = ureq::post(url)
         .set("Content-Type", "application/json")
         .send_json(ureq::json!({
@@ -44,7 +44,7 @@ fn fetch_metadata(url: &str) -> color_eyre::Result<RuntimeMetadataPrefixed<Strin
 }
 
 fn display_metadata(
-    metadata: RuntimeMetadataPrefixed<String>,
+    metadata: RuntimeMetadataPrefixed,
     args: &SubSee,
 ) -> color_eyre::Result<()> {
     let serialized = if let Some(ref pallet) = args.pallet {
