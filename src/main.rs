@@ -64,7 +64,7 @@ fn display_metadata(
             }
             RuntimeMetadata::V13(v13) => {
                 let pallet = v13
-                    .modules
+                    .pallets
                     .iter()
                     .find(|m| &m.name == pallet)
                     .ok_or_else(|| eyre::eyre!("pallet not found in metadata"))?;
