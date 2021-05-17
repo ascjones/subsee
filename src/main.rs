@@ -1,6 +1,9 @@
 use argh::FromArgs;
 use color_eyre::eyre::{self, WrapErr};
-use frame_metadata::{v12, RuntimeMetadata, RuntimeMetadataPrefixed};
+use frame_metadata::{
+    decode_different::{DecodeDifferent, DecodeDifferentArray},
+    RuntimeMetadata, RuntimeMetadataPrefixed,
+};
 
 #[derive(FromArgs)]
 /// Inspect substrate metadata
@@ -43,27 +46,37 @@ fn fetch_metadata(url: &str) -> color_eyre::Result<RuntimeMetadataPrefixed> {
     Ok(decoded)
 }
 
-fn display_metadata(
-    metadata: RuntimeMetadataPrefixed,
-    args: &SubSee,
-) -> color_eyre::Result<()> {
+fn display_metadata(metadata: RuntimeMetadataPrefixed, args: &SubSee) -> color_eyre::Result<()> {
     let serialized = if let Some(ref pallet) = args.pallet {
         match metadata.1 {
             RuntimeMetadata::V12(v12) => {
                 let modules = match v12.modules {
-                    v12::DecodeDifferentArray::Decoded(modules) => modules,
-                    v12::DecodeDifferentArray::Encode(_) => {
+                    DecodeDifferentArray::Decoded(modules) => modules,
+                    DecodeDifferentArray::Encode(_) => {
                         return Err(eyre::eyre!("Metadata should be Decoded"))
                     }
                 };
-                let pallet_metadata = modules
+                let module = modules
                     .iter()
-                    .find(|module| module.name == v12::DecodeDifferent::Decoded(pallet.into()))
+                    .find(|module| module.name == DecodeDifferent::Decoded(pallet.into()))
                     .ok_or_else(|| eyre::eyre!("pallet not found in metadata"))?;
-                serde_json::to_string_pretty(&pallet_metadata)?
+                serde_json::to_string_pretty(&module)?
             }
             RuntimeMetadata::V13(v13) => {
-                let pallet = v13
+                let modules = match v13.modules {
+                    DecodeDifferentArray::Decoded(modules) => modules,
+                    DecodeDifferentArray::Encode(_) => {
+                        return Err(eyre::eyre!("Metadata should be Decoded"))
+                    }
+                };
+                let module = modules
+                    .iter()
+                    .find(|module| module.name == DecodeDifferent::Decoded(pallet.into()))
+                    .ok_or_else(|| eyre::eyre!("pallet not found in metadata"))?;
+                serde_json::to_string_pretty(&module)?
+            }
+            RuntimeMetadata::V14(v14) => {
+                let pallet = v14
                     .pallets
                     .iter()
                     .find(|m| &m.name == pallet)
