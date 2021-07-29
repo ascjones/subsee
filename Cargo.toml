@@ -21,5 +21,3 @@ hex = "0.4.2"
 frame-metadata = { package = "frame-metadata", git = "https://github.com/paritytech/frame-metadata", branch = "main", features = ["v12", "v13", "v14", "std"] }
 # for decoding bytes into the metadata types
 scale = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
-
-
