@@ -180,8 +180,8 @@ dependencies = [
 
 [[package]]
 name = "frame-metadata"
-version = "14.0.0"
-source = "git+https://github.com/paritytech/frame-metadata?branch=main#e5c1540cf17577c40fc00b905a2d6afee9090cf6"
+version = "14.0.0-rc.2"
+source = "git+https://github.com/paritytech/frame-metadata?branch=main#732682ed46b150ae300695fe0ad3bdac92d8ec3d"
 dependencies = [
  "cfg-if",
  "parity-scale-codec",
@@ -425,9 +425,9 @@ checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
 
 [[package]]
 name = "scale-info"
-version = "0.10.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2e62ff266e136db561a007c84569985805f84a1d5a08278e52c36aacb6e061b"
+checksum = "5cf40f28c3eca6a9abe66aa368d7475f6c92a626fb5737d131c82c0170b24f36"
 dependencies = [
  "bitvec",
  "cfg-if",
