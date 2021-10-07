@@ -4,6 +4,7 @@ use frame_metadata::{
     decode_different::{DecodeDifferent, DecodeDifferentArray},
     RuntimeMetadata, RuntimeMetadataPrefixed,
 };
+use std::io::{self, Write};
 
 #[derive(FromArgs)]
 /// Inspect substrate metadata
@@ -14,19 +15,39 @@ struct SubSee {
     /// the name of a pallet to display metadata for, otherwise displays all
     #[argh(option, short = 'p')]
     pallet: Option<String>,
+    /// the format of the metadata to display: `json`, `hex` or `bytes`
+    #[argh(option, short = 'f', default = "\"json\".to_string()")]
+    format: String,
 }
 
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
     let args: SubSee = argh::from_env();
 
-    let metadata = fetch_metadata(&args.url)?;
-    display_metadata(metadata, &args)?;
+    let json = fetch_metadata(&args.url)?;
+    let hex_data = json["result"]
+        .as_str()
+        .ok_or(eyre::eyre!("metadata result field should be a string"))?;
+    let bytes = hex::decode(hex_data.trim_start_matches("0x"))?;
 
-    Ok(())
+    match args.format.as_str() {
+        "json" => {
+            let metadata = scale::Decode::decode(&mut &bytes[..])?;
+            display_metadata_json(metadata, &args)
+        }
+        "hex" => {
+            println!("{}", hex_data);
+            Ok(())
+        }
+        "bytes" => Ok(io::stdout().write_all(&bytes)?),
+        _ => Err(eyre::eyre!(
+            "Unsupported format `{}`, expected `json`, `hex` or `bytes`",
+            args.format
+        )),
+    }
 }
 
-fn fetch_metadata(url: &str) -> color_eyre::Result<RuntimeMetadataPrefixed> {
+fn fetch_metadata(url: &str) -> color_eyre::Result<serde_json::Value> {
     let resp = ureq::post(url)
         .set("Content-Type", "application/json")
         .send_json(ureq::json!({
@@ -36,17 +57,13 @@ fn fetch_metadata(url: &str) -> color_eyre::Result<RuntimeMetadataPrefixed> {
         }))
         .context("error fetching metadata from the substrate node")?;
 
-    let json: serde_json::Value = resp.into_json()?;
-    let hex_data = json["result"]
-        .as_str()
-        .ok_or(eyre::eyre!("metadata result field should be a string"))?;
-
-    let bytes = hex::decode(hex_data.trim_start_matches("0x"))?;
-    let decoded = scale::Decode::decode(&mut &bytes[..])?;
-    Ok(decoded)
+    Ok(resp.into_json()?)
 }
 
-fn display_metadata(metadata: RuntimeMetadataPrefixed, args: &SubSee) -> color_eyre::Result<()> {
+fn display_metadata_json(
+    metadata: RuntimeMetadataPrefixed,
+    args: &SubSee,
+) -> color_eyre::Result<()> {
     let serialized = if let Some(ref pallet) = args.pallet {
         match metadata.1 {
             RuntimeMetadata::V12(v12) => {
