@@ -2,10 +2,12 @@
 
 CLI to inspect substrate metadata.
 
-`cargo install --git https://github.com/ascjones/subsee`
+```shell
+cargo install --git https://github.com/ascjones/subsee
+```
 
 ```
-Usage: subsee [--url <url>] [-p <pallet>]
+Usage: subsee [--url <url>] [-p <pallet>] [-f <format>]
 
 Inspect substrate metadata
 
@@ -13,11 +15,13 @@ Options:
   --url             the url of the substrate node to query for metadata
   -p, --pallet      the name of a pallet to display metadata for, otherwise
                     displays all
+  -f, --format      the format of the metadata to display: `json`, `hex` or
+                    `bytes`
   --help            display usage information
 ```
 
-Currently just outputs the metadata of a substrate node as json.
+For, example:
 
-Expects a substrate node to be running locally with the default endpoint `"http://localhost:9933"`.
-
-
+```shell
+subsee --format json --url https://rpc.polkadot.io/
+```
