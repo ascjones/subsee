@@ -20,7 +20,7 @@ Options:
   --help            display usage information
 ```
 
-For, example:
+For example:
 
 ```shell
 subsee --format json --url https://rpc.polkadot.io/
