@@ -1,5 +1,7 @@
 # subsee
 
+### Deprecated: please use [`subxt-cli`](https://github.com/paritytech/subxt#downloading-metadata-from-a-substrate-node) or [`subwasm`](https://github.com/chevdor/subwasm)
+
 CLI to inspect substrate metadata.
 
 ```shell
